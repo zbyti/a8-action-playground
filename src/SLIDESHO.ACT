@@ -47,7 +47,7 @@ PROC LANDSCAPE()
   WHILE X#0 DO
     X==-1
     FOR I=0 TO 1 DO
-      P=$6010+X START=0 C=14
+      P=LMS+X START=0 C=14
       WHILE C#0 DO
         C==-1 STOP=COLHEIGHT(C)
         IF START>STOP THEN
