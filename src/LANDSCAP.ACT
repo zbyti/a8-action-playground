@@ -1,0 +1,38 @@
+;------------------------------------------------------------------------------
+; This is a part of Quatari 256B intro
+; https://demozoo.org/productions/280623
+;------------------------------------------------------------------------------
+
+BYTE
+  CURSOR_Y = $54,
+  CURSOR_X = $55,
+  PREV_Y   = $5A,
+  PREV_X   = $5B,
+  COLOR4   = $02C8,
+  COLOR    = $02FB,
+  RND      = $D20A,
+  I        = $CA
+
+BYTE ARRAY COLOR_HEIGHT=[
+  170 150 144 144 122 122 110 110 94 94 86 86 82 80
+]
+
+PROC OPENMODE=$EF9C(BYTE M)
+PROC DRAWTO=$F9C2()
+
+PROC MAIN()
+  OPENMODE(9) COLOR4=$B0
+
+  FOR I=0 TO 79 DO
+    CURSOR_X=I PREV_X=I
+    COLOR=13 PREV_Y=1
+    WHILE COLOR#$FF DO
+      CURSOR_Y=COLOR_HEIGHT(COLOR)
+      IF RND&1 THEN COLOR_HEIGHT(COLOR)==-1 FI
+      IF RND&1 THEN COLOR_HEIGHT(COLOR)==+1 FI
+      DRAWTO() COLOR==-1
+    OD
+  OD
+
+  DO OD
+RETURN

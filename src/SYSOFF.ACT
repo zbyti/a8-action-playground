@@ -1,0 +1,85 @@
+;------------------------------------------------------------------------------
+; System Off in Action!
+; by @zbyti
+;------------------------------------------------------------------------------
+
+DEFINE
+  DLADDR="$2100",DLI1ADDR="$2140",DLI2ADDR="$2180",
+  PHR="[$48$8A$48$98$48]",PLR="[$68$A8$68$AA$68]",
+  PHA="[$48]",PLA="[$68]",SEI="[$78]",
+  RTI="[$40]",RTS="[$60]"
+
+SET $E=$2000
+
+BYTE
+  COLPF2=$D018,PORTB=$D301,
+  WSYNC=$D40A,NMIEN=$D40E,
+  RTIVEC=$15,RTCLOK2=$14
+
+CARD
+  DLIST=$D402,NMIVEC=$FFFA,
+  VBIVEC=$10,VDSLST=$16
+
+CARD POINTER ADDR
+
+PROC NMI=*()[
+ $2C $0F $D4  ;BIT $D40F   ;NMIST
+ $10 $03      ;BPL
+ $6C VDSLST 0 ;JMP ($0016) ;BUFADR+1
+ $E6 $14      ;INC $14     ;RTCLOK+2
+ $D0 $06      ;BNE
+ $E6 $13      ;INC $13     ;RTCLOK+1
+ $D0 $02      ;BNE
+ $E6 $12      ;INC $12     ;RTCLOK
+ $6C VBIVEC 0 ;JMP ($0010) ;POKMSK
+]
+
+PROC SYSTEMOFF=*()
+  SEI
+  NMIEN=0 PORTB=$FE RTIVEC=$40
+  VBIVEC=@RTIVEC VDSLST=@RTIVEC
+  ADDR=NMI NMIVEC=ADDR NMIEN=$40
+RTS
+
+PROC VBI=*()
+  PHR
+  COLPF2=RTCLOK2
+  PLR
+RTI
+
+PROC WAIT=*(BYTE F)[$18$65$14$C5$14$D0$FC$60]
+
+SET $E=DLADDR
+PROC DL=*()[
+  $70 $70 $70
+  $42 0 $E0
+  2 2 $F0 2 2 2 $F0 2 2 2
+  $41 DL
+]
+
+SET $E=DLI1ADDR
+PROC DLI1=*()
+  PHR
+  COLPF2=$DE
+  WSYNC=$DE
+  VDSLST=DLI2ADDR
+  PLR
+RTI
+
+SET $E=DLI2ADDR
+PROC DLI2=*()
+  PHR
+  COLPF2=RTCLOK2
+  VDSLST=DLI1ADDR
+  PLR
+RTI
+
+PROC MAIN=*()
+  SYSTEMOFF()
+  WAIT(50)
+  DLIST=DLADDR
+  WAIT(100)
+  ADDR=VBI VBIVEC=ADDR
+  WAIT(100)
+  VDSLST=DLI1ADDR NMIEN=$C0
+RTS
