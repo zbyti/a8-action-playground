@@ -1,6 +1,6 @@
-# a8-action-playground
+# Action! 3.6 by OSS
 
-[Action! 3.6 by OSS AtariWiki](https://atariwiki.org/wiki/Wiki.jsp?page=Action)
+[AtariWiki](https://atariwiki.org/wiki/Wiki.jsp?page=Action)
 
 [Wikipedia](https://en.wikipedia.org/wiki/Action!_(programming_language))
 
