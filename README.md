@@ -1,6 +1,6 @@
 # a8-action-playground
 
-[AtariWiki](https://github.com/KarolS/millfork)
+[Action! 3.6 by OSS AtariWiki](https://atariwiki.org/wiki/Wiki.jsp?page=Action)
 
 [Wikipedia](https://en.wikipedia.org/wiki/Action!_(programming_language))
 
