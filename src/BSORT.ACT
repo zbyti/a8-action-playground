@@ -1,0 +1,92 @@
+SET $E=$2000
+
+; INCLUDE "H6:RUNTIME.ACT"
+
+DEFINE
+  DEC="[$C6",CED="]",INC="[$E6",CNI="]",
+  PHR="[$48$8A$48$98$48]",PLR="[$68$A8$68$AA$68]",
+  SETVBV="$E45C",JMP="$6C"
+
+;------------------------------------------------------------------------------
+
+BYTE ARRAY DL=[$70$70$70$42$E0$00$41$00$20]
+
+BYTE
+  CHBAS=$2F4,LSB,MSB,
+  A=$E0,B=$E1,C=$E2,D=$E3,E=$E4,
+  N1=$CA,N2=$CB,I=$CC,SIZE=$CD,TMP=$CE
+
+BYTE ARRAY SORTTABLE(255)
+
+CARD
+  VVBLKD=$224,SDLSTL=$230,OLDVBL
+
+;------------------------------------------------------------------------------
+
+PROC WAIT=*(BYTE F)[$18$65$14$C5$14$D0$FC$60]
+
+PROC SETVBLK=SETVBV(BYTE WHICH,MSB,LSB)
+
+;------------------------------------------------------------------------------
+
+SET $E=$3000
+PROC VBLANKD=*()
+  PHR
+  INC E CNI
+  IF E=10 THEN INC D CNI E=0 FI
+  IF D=10 THEN INC C CNI D=0 FI
+  IF C=10 THEN INC B CNI C=0 FI
+  IF B=10 THEN INC A CNI B=0 FI
+  PLR
+  [JMP OLDVBL]
+
+;------------------------------------------------------------------------------
+
+PROC INITCOUNTER=*()
+  MOVEBLOCK($4000,$E080,80)
+  SETBLOCK($E0,$28,$FF)
+  A=0 B=0 C=0 D=0 E=0
+  CHBAS=$40 SDLSTL=DL OLDVBL=VVBLKD
+RETURN
+
+PROC STARTCOUNTER=*()
+  WAIT(1)
+  SETVBLK(7,$30,0)
+RETURN
+
+PROC STOPCOUNTER=*()
+  LSB=PEEK(@OLDVBL) MSB=PEEK(@OLDVBL+1)
+  SETVBLK(7,MSB,LSB)
+RETURN
+
+;------------------------------------------------------------------------------
+
+PROC MAIN=*()
+  SIZE=254 TMP=255
+
+  FOR I=0 TO 254 DO
+    SORTTABLE(I)=TMP
+    DEC TMP CED
+  OD
+  FOR I=0 TO 254 DO PRINTB(SORTTABLE(I)) PUT(32) OD
+  WAIT(100)
+
+  INITCOUNTER() STARTCOUNTER()
+
+  WHILE SIZE#0 DO
+    FOR I=0 TO 253 DO
+      N1=SORTTABLE(I) N2=SORTTABLE(I+1)
+      IF N1>N2 THEN
+          SORTTABLE(I)=N2
+          SORTTABLE(I+1)=N1
+      FI
+    OD
+    DEC SIZE CED
+  OD
+
+  STOPCOUNTER() WAIT(100)
+
+  GRAPHICS(0)
+  FOR I=0 TO 254 DO PRINTB(SORTTABLE(I)) PUT(32) OD
+  DO OD
+RETURN
