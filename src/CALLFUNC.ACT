@@ -1,0 +1,62 @@
+MODULE ; Action! version of Example 5
+; First, let's define the PROC's
+; to be called:
+PROC Print1=*()
+ PrintE("Number 1")
+RETURN
+PROC Print2=*()
+ PrintE("Number 2")
+RETURN
+PROC Print3=*()
+ PrintE("Number 3")
+RETURN
+; Next, we define a dummy PROC which
+; holds the addresses of the PROC's
+; we want to execute:
+; (We can't define these in a
+; CARD ARRAY because they're NOT
+; constants and Action! would choke
+; on them.)
+
+PROC dummy=*() [
+  Print1 Print2 Print3 ]
+
+; Now, a MODULE statement because
+; we have to declare a variable:
+
+MODULE ; for CARD ARRAY declaration
+
+; This declares a CARD ARRAY that
+; points (suprize!) to "dummy"
+CARD ARRAY ptrary = dummy
+; This routine does a JMP indirect
+; to the address passed to it:
+
+PROC Indirect=*(CARD address) [
+  ; ("address" is passed in the A and
+  ; X registers)
+
+  $85 $AE ;STA $AE save low byte
+  $86 $AF ;STX $AF save high byte
+
+; NOTE! To change this to emulate ON x GOTO rather than
+; ON x GO5UB, add this line here:
+;
+; $68 $68 ;PLA/PLA pull off
+          ; return address
+
+  $6C $AE $00 ] ;JMP ($AE)
+; jump indirect to routine, which
+; RTS's itself to the calling PROC
+; Now, our version of the
+; C "main" function:
+
+PROC main()
+BYTE i
+  FOR i = 0 TO 2 DO
+    ; Fetch address of routine to
+    ; call ( ptrary(i) ) and execute
+    ; it (via "Indirect" PROC)
+    Indirect(ptrary(i))
+  OD
+RETURN
