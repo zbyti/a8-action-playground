@@ -4,12 +4,82 @@
 CARD ADRREP,ADRMUS,VVBLKD=$224
 BYTE CON=$D01F,ABC,BCD
 
-PROC CIO=$E456(BYTE areg,xreg)CARD FUNC Burst(BYTE chan,mode,CARD addr,buflen)TYPE IOCB=[BYTE id,num,cmd,stat
-CARD badr,padr,blen BYTE a1,a2,a3,a4,a5,a6]IOCB POINTER iptr chan==&$07 iptr=$340+(chan LSH 4) iptr.cmd=mode
-iptr.blen=buflen iptr.badr=addr CIO(0,chan LSH 4)RETURN(iptr.blen)CARD FUNC BGet(BYTE chan CARD addr,len)CARD temp
-temp=Burst(chan,7,addr,len)RETURN (temp)PROC COMM(BYTE A,X,Y) RETURN PROC TAKT() RETURN
-CARD FUNC DOS(BYTE ARRAY NAME )CARD ST,ND CLOSE(4)OPEN(4,NAME,4,0)BGET(4,@ST,2)IF ST<>$FFFF THEN PRINTE("NO DOS FILE!")
-BREAK() FI DO BGET(4,@ST,2)UNTIL ST<>$FFFF OD BGET(4,@ND,2)BGET(4,ST,ND-ST+1)CLOSE(4)RETURN (ST)
-PROC GRAJ()TAKT()[ $4C $E462]RETURN PROC SETVBLV=$E45C(BYTE A,X,Y)PROC SETV(CARD AD)BYTE A,B IF AD<>0 THEN A=AD AND $FF
-B=AD RSH 8 SETVBLV(7,B,A)ELSE SETVBLV(7,$C2,$8A)FI RETURN
+;--------------------------------------
 
+PROC CIO=$E456(BYTE areg,xreg)
+
+;--------------------------------------
+
+CARD FUNC Burst(BYTE chan,mode,CARD addr,buflen)
+  TYPE IOCB=[
+    BYTE id,num,cmd,stat
+    CARD badr,padr,blen
+    BYTE a1,a2,a3,a4,a5,a6
+  ]
+  IOCB POINTER iptr
+
+  chan==&$07
+  iptr=$340+(chan LSH 4)
+  iptr.cmd=mode
+  iptr.blen=buflen
+  iptr.badr=addr
+  CIO(0,chan LSH 4)
+RETURN(iptr.blen)
+
+;--------------------------------------
+
+CARD FUNC BGet(BYTE chan CARD addr,len)
+  CARD temp
+
+  temp=Burst(chan,7,addr,len)
+RETURN (temp)
+
+;--------------------------------------
+
+PROC COMM(BYTE A,X,Y) RETURN
+
+;--------------------------------------
+
+PROC TAKT() RETURN
+
+;--------------------------------------
+
+CARD FUNC DOS(BYTE ARRAY NAME )
+  CARD ST,ND
+
+  CLOSE(4)
+  OPEN(4,NAME,4,0)
+  BGET(4,@ST,2)
+  IF ST<>$FFFF THEN PRINTE("NO DOS FILE!") BREAK() FI
+  DO
+    BGET(4,@ST,2)
+    UNTIL ST<>$FFFF
+  OD
+  BGET(4,@ND,2)
+  BGET(4,ST,ND-ST+1)
+  CLOSE(4)
+RETURN (ST)
+
+;--------------------------------------
+
+PROC GRAJ()
+  TAKT()[$4C $E462]
+RETURN
+
+;--------------------------------------
+
+PROC SETVBLV=$E45C(BYTE A,X,Y)
+
+;--------------------------------------
+
+PROC SETV(CARD AD)
+  BYTE A,B
+
+  IF AD<>0 THEN
+    A=AD AND $FF
+    B=AD RSH 8
+    SETVBLV(7,B,A)
+  ELSE
+    SETVBLV(7,$C2,$8A)
+  FI
+RETURN
