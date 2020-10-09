@@ -2,23 +2,54 @@
 ; System Off in Action!
 ; by @zbyti
 ;------------------------------------------------------------------------------
-
-SET $495=8 SET $E=$2000 SET $491=$2000
+;   STABLE     APPMHI      CODEBASE       CODEOFF
+SET $495=8 SET $E=$E00 SET $491=$E00 ;SET $B5=$FC00
+;   offset for F0x Dos RUNADDR=$0A00
+;------------------------------------------------------------------------------
 
 DEFINE
   PHR="[$48$8A$48$98$48]",PLR="[$68$A8$68$AA$68]",
   PHA="[$48]",PLA="[$68]",SEI="[$78]",
   RTI="[$40]",RTS="[$60]"
 
+;------------------------------------------------------------------------------
+
+PROC NMI=*()[
+ $2C $0F $D4  ;BIT $D40F   ;NMIST
+ $10 $03      ;BPL
+ $4C NMI+21   ;JMP
+ $E6 $14      ;INC $14     ;RTCLOK+2
+ $D0 $06      ;BNE
+ $E6 $13      ;INC $13     ;RTCLOK+1
+ $D0 $02      ;BNE
+ $E6 $12      ;INC $12     ;RTCLOK
+ $4C NMI+21   ;JMP
+ $40
+]
+
+PROC WAIT=*(BYTE F)[$18$65$14$C5$14$D0$FC$60]
+
+;------------------------------------------------------------------------------
+
+MODULE
+
 BYTE
   COLPF2=$D018,PORTB=$D301,
   WSYNC=$D40A,NMIEN=$D40E,
-  RTIVEC=$15,RTCLOK2=$14
+  RTCLOK2=$14
 
 CARD
   DLIST=$D402,NMIVEC=$FFFA,
-  VBIVEC=$10,VDSLST=$16,
-  LMS=$E000,CARTOFF=$D508
+  LMS=$E000,CARTOFF=$D508,
+  VDSLST=NMI+6,VBIVEC=NMI+19
+
+PROC SYSTEMOFF=*()
+  SEI
+  NMIEN=0 PORTB=$FE
+  NMIVEC=NMI NMIEN=$40
+RTS
+
+;------------------------------------------------------------------------------
 
 PROC DL=*()[
   $70 $70 $70
@@ -48,33 +79,14 @@ PROC VBI=*()
   PLR
 RTI
 
-PROC WAIT=*(BYTE F)[$18$65$14$C5$14$D0$FC$60]
-
-PROC NMI=*()[
- $2C $0F $D4  ;BIT $D40F   ;NMIST
- $10 $03      ;BPL
- $6C VDSLST 0 ;JMP ($0016) ;BUFADR+1
- $E6 $14      ;INC $14     ;RTCLOK+2
- $D0 $06      ;BNE
- $E6 $13      ;INC $13     ;RTCLOK+1
- $D0 $02      ;BNE
- $E6 $12      ;INC $12     ;RTCLOK
- $6C VBIVEC 0 ;JMP ($0010) ;POKMSK
-]
-
-PROC SYSTEMOFF=*()
-  SEI
-  NMIEN=0 PORTB=$FE RTIVEC=$40
-  VBIVEC=@RTIVEC VDSLST=@RTIVEC
-  NMIVEC=NMI NMIEN=$40
-RTS
+;------------------------------------------------------------------------------
 
 PROC MAIN=*()
   SYSTEMOFF()
-  ; CARTOFF=1 disable Action! 3.6 cartridge
   WAIT(50) DLIST=DL
   WAIT(100) VBIVEC=VBI
   WAIT(100) VDSLST=DLI1
   NMIEN=$C0
+  ; CARTOFF=1 disable Action! 3.6 cartridge
   DO OD
 RTS
