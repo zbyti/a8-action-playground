@@ -24,7 +24,7 @@ PROC NMI=*()[
  $D0 $02      ;BNE
  $E6 $12      ;INC $12     ;RTCLOK
  $4C NMI+21   ;JMP
- $40
+ $40          ;RTI
 ]
 
 PROC WAIT=*(BYTE F)[$18$65$14$C5$14$D0$FC$60]
