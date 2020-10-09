@@ -1,0 +1,194 @@
+; C style strings - arbitrary
+; length ending with a null byte
+;--------------------------------
+; Written Sept 3rd, 1987
+; by John DiMarco
+;--------------------------------
+; Complete permission is given to
+; duplicate this work, so long as
+; this message is included in any
+; duplicate.
+
+MODULE
+BYTE NULL=0
+BYTE ARRAY C_TMP(255)
+
+PROC AtoC(BYTE ARRAY A,C)
+  ; Convert from Action-style string
+  ; to C style string
+  ; Assume A,C are defined and
+  ; C is as long as A.
+  BYTE i
+  FOR i=1 TO A(0) DO
+	 C(i-1)=A(i)
+  OD
+  C(A(0))=NULL
+RETURN
+
+CARD FUNC AC(BYTE ARRAY A)
+  ; Convert an Action-style string
+  ; to a C style string
+  BYTE i,j
+  j=A(0)
+  FOR i=1 TO j DO
+	 A(i-1)=A(i)
+  OD
+  A(j)=NULL
+RETURN (A)
+
+CARD FUNC CSLength(BYTE ARRAY C)
+  CARD i
+  i=0
+  WHILE C(i)<>NULL DO
+	 i==+1
+  OD
+RETURN (i)
+
+CARD FUNC CA(BYTE ARRAY C)
+  ; Convert a C style string to an
+  ; Action style string
+  BYTE i,j
+  j = CSLength(C)
+  FOR i=0 TO j-1 DO
+	 C(j-i)=C((j-i)-1)
+  OD
+  C(0)=j
+RETURN (C)
+
+PROC CtoA(BYTE ARRAY C,A)
+  ; Convert from C style strings to
+  ; Action style strings
+  ; Assume C,A are defined and
+  ; C is less than 255 bytes long.
+  BYTE i
+  FOR i=0 TO 255 DO
+	 IF C(i)=NULL THEN
+		EXIT
+	 FI
+	 A(i+1)=C(i)
+  OD
+  A(0)=i
+RETURN
+
+PROC CPrintD(BYTE Channel,BYTE ARRAY C)
+  CARD i
+  i=0
+  WHILE C(i)<>NULL DO
+	 PutD(Channel,C(i))
+	 i==+1
+  OD
+RETURN
+
+PROC CPrint(BYTE ARRAY C)
+  CPrintD(0,C)
+RETURN
+
+PROC CPrintDE(BYTE Channel,BYTE ARRAY C)
+  CPrintD(Channel,C)
+  PutD(Channel,155)
+RETURN
+
+PROC CPrintE(BYTE ARRAY C)
+  CPrintDE(0,C)
+RETURN
+
+PROC CInputSD(BYTE Channel,BYTE ARRAY C)
+  InputSD(Channel,C_TMP)
+  AtoC(C_TMP,C)
+RETURN
+
+PROC CInputS(BYTE ARRAY C)
+  CInputSD(0,C)
+RETURN
+
+PROC CInputMD(BYTE Channel, BYTE ARRAY C, BYTE max)
+  InputMD(Channel,C_TMP,max)
+  AtoC(C_TMP,C)
+RETURN
+
+PROC COpen(BYTE channel, BYTE ARRAY filestring, BYTE mode, aux2)
+  CtoA(filestring, C_TMP)
+  Open(channel, C_TMP, mode, aux2)
+RETURN
+
+PROC CXIO(BYTE channel, mystery, cmd, aux1, aux2, BYTE ARRAY filestring)
+  CtoA(filestring,C_TMP)
+  XIO(channel,mystery,cmd,aux1,aux2,C_TMP)
+RETURN
+
+INT FUNC CSCompare(BYTE ARRAY C1,C2)
+  INT r1,r2
+  CARD i
+  i=0
+  WHILE C1(i)=C2(i) AND C1(i)<>NULL AND C2(i) <> NULL DO
+	 i==+1
+  OD
+  r1=C1(i)
+  r2=C2(i)
+RETURN (r1-r2)
+
+PROC CSCopy(BYTE ARRAY DEST,SRC)
+  ; Make sure DEST is big enough!!!
+  CARD i
+  BYTE X
+  i=0
+  DO
+	 DEST(i)=SRC(i)
+	 IF SRC(i)=NULL THEN
+		EXIT
+	 FI
+	 i==+1
+  OD
+RETURN
+
+PROC CSCopyS(BYTE ARRAY DEST,SRC, CARD START,STOP)
+  ; Make sure DEST is big enough!!!!
+  ; Also make sure START and STOP are
+  ; within SRC.
+  CARD i
+  i=START
+  WHILE SRC(i-1)<>NULL AND i<=STOP DO
+	 DEST(i-START)=SRC(i-1)
+	 i==+1
+  OD
+  DEST(i-START)=NULL
+RETURN
+
+PROC CSAssign(BYTE ARRAY DEST,SRC,CARD START,STOP)
+  ; Make sure DEST is big enough!!!!
+  ; Also make sure START and STOP are
+  ; within SRC.
+  CARD i
+  i=0
+  WHILE SRC(i-1)<>NULL AND i<(STOP-START+1) DO
+	 DEST(i+START-1)=SRC(i)
+	 i==+1
+  OD
+RETURN
+
+PROC CStrB(BYTE number, BYTE ARRAY C)
+  StrB(number,C_TMP)
+  AtoC(C_TMP,C)
+RETURN
+
+PROC CStrC(CARD number, BYTE ARRAY C)
+  StrC(number,C_TMP)
+  AtoC(C_TMP,C)
+RETURN
+
+PROC CStrI(INT number, BYTE ARRAY C)
+  StrI(number,C_TMP)
+  AtoC(C_TMP,C)
+RETURN
+
+BYTE FUNC CValB(BYTE ARRAY C)
+  CtoA(C,C_TMP)
+RETURN (ValB(C_TMP))
+
+CARD FUNC CValC(BYTE ARRAY C)
+  CtoA(C,C_TMP)
+RETURN (ValC(C_TMP))
+
+INT FUNC CValI(BYTE ARRAY C)
+  CtoA(C,C_TMP)
+RETURN (ValI(C_TMP))

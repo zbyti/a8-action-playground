@@ -1,0 +1,101 @@
+MODULE
+
+BYTE Q
+
+
+;  PLOT in 8 gr. 13 RAZY SZYBSZY
+; (C) 1989 by Mirage Software Ltd.
+; programmed by Arkadiusz Lukszo
+;        & Jakub Husak
+
+
+PROC _XPOSM=*()
+[ $7F $BF $DF $EF $F7 $FB $FD $FE ]
+PROC _XPOM=*()
+[ $80 $40 $20 $10 $08 $04 $02 $01 ]
+PROC _PL_2=*() [
+$8A            ;   TXA 
+$A2 $00        ;   LDX #0
+$86 $CC        ;   STX ADRP+1
+$85 $CB        ;   STA ADRP
+$0A            ;   ASL A
+$26 $CC        ;   ROL ADRP+1
+$0A            ;   ASL A
+$26 $CC        ;   ROL ADRP+1
+$18            ;   CLC 
+$65 $CB        ;   ADC ADRP
+$90 $02        ;   BCC S1
+$E6 $CC        ;   INC ADRP+1
+               ;S1
+$0A            ;   ASL A
+$26 $CC        ;   ROL ADRP+1
+$0A            ;   ASL A
+$26 $CC        ;   ROL ADRP+1
+$0A            ;   ASL A
+$26 $CC        ;   ROL ADRP+1
+$18            ;   CLC 
+$65 $58        ;   ADC 88
+$85 $CB        ;   STA ADRP
+$A5 $CC        ;   LDA ADRP+1
+$65 $59        ;   ADC 89
+$85 $CC        ;   STA ADRP+1
+$98            ;   TYA 
+$29 $07        ;   AND #7
+$AA            ;   TAX 
+$98            ;   TYA 
+$46 $A3        ;   LSR $A3
+$6A            ;   ROR A
+$4A            ;   LSR A
+$4A            ;   LSR A
+$A8 ]          ;   TAY 
+PROC _SL=*() [
+$A9 $00        ;COL LDA #0
+$C9 $01        ;   CMP #1
+$F0 $08        ;   BEQ UNPL
+$B1 $CB        ;   LDA (ADRP),Y
+$3D _XPOSM     ;   AND XPOSM,X
+$91 $CB        ;   STA (ADRP),Y
+$60            ;   RTS 
+$B1 $CB        ;UNPL LDA (ADRP),Y
+$1D _XPOM      ;   ORA XPOM,X
+$91 $CB        ;   STA (ADRP),Y
+$60 ]          ;   RTS 
+
+PROC FPLOT=*(BYTE COL,Y CARD X)
+[ $8D _SL+1    ;   STA COL+1
+  $4C _PL_2 ]  ;   JMP _PL_2
+
+
+; -------- PROC TESTUJACE ---------
+
+PROC TEST_NORMAL8()
+GRAPHICS(8+16)
+ 
+DO
+ [173 $D40B 201 20 208 249]
+ POKE(53274,5)
+ COLOR=1
+ FOR Q=0 TO 12 DO
+  PLOT(Q,70)
+ OD
+ POKE(53274,0)
+OD
+[96]
+
+PROC TEST_FAST8()
+GRAPHICS(8+16)
+
+DO
+ [173 $D40B 201 20 208 249]
+ POKE(53274,5)
+ FOR Q=0 TO 146 DO
+  FPLOT(1,50,Q)
+ OD
+ POKE(53274,0)
+OD
+[96]
+
+PROC MAIN()
+;TEST_NORMAL8()
+ TEST_FAST8()
+[96]

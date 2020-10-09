@@ -1,0 +1,73 @@
+MODULE ; STDIO.ACT
+
+DEFINE STRING="CHAR ARRAY"
+DEFINE STOREINT="$85$A0$86$A1"
+DEFINE STOREBYTE="$85$A0"
+DEFINE JSR="$20"
+DEFINE JMP="$4C"
+
+SET $4E4=$1BE7 ;LSH
+SET $4E6=$1BFF ;RSH
+SET $4EE=$1BB3 ;FUNC CALL
+
+PROC stasetup=$1AE1()
+PROC stback=$1AEB()
+PROC asetup1=$1AFF()
+PROC asetup2=$1B05()
+PROC stoa=$1B0F(STRING s)
+PROC stoc=$1B38(STRING s)
+
+PROC circle=$1C7D(CARD xc,yc,radius)
+PROC clrtime=$3114()
+PROC drawto=*(CARD x, BYTE y) asetup1() [JMP $3096]
+PROC fast() [$A0$1 JMP $30A5]
+PROC hitclear=$3117()
+PROC normalize(STRING name,ext) stoc(name) stoc(ext) asetup2()
+[JSR $303F] stoa(name) stoa(ext) RETURN
+PROC plot=$1C17(CARD x, BYTE y)
+PROC pmcolor=$1C77(CARD n,hue, BYTE lum)
+PROC slow() [$A0$1 JMP $30A8]
+PROC cprintf=$1B91(CARD t1,t2,t3,t4,t5,t6,t7,t8)
+
+CARD FUNC abs=$314E(INT i)
+INT  FUNC atoi=*(STRING s) stasetup() [JSR $3057 JMP stback]
+INT  FUNC bgets=$3151(CARD addr,len, BYTE iocb)
+INT  FUNC bputs=$3154(CARD addr,len, BYTE iocb)
+BYTE FUNC brkey=$1CCB()
+INT  FUNC ciov=*(CARD iocb,cmd,addr,len,ax1,ax2) asetup1() [JSR
+ $301E STOREINT $60]
+BYTE FUNC console=$1CD1()
+INT  FUNC copen(STRING name, BYTE mode) stoc(name) asetup2() [J
+SR $3018 JMP stback]
+CARD FUNC dpoke=$315A(CARD addr,word)
+INT  FUNC ferase=*(STRING s) stasetup() [JSR $30F0 JMP stback]
+INT  FUNC flock=*(STRING s) stasetup() [JSR $30E7 JMP stback]
+INT  FUNC frename=*(STRING s) stasetup() [JSR $30ED JMP stback]
+INT  FUNC funlock=*(STRING s) stasetup() [JSR $30EA JMP stback]
+INT  FUNC find=$3148(CARD addr,len, BYTE c)
+INT  FUNC fscanf(CARD iocb, STRING s, CARD t1,t2,t3,t4,t5,t6) s
+toc(s) asetup2() [JSR $3126 STOREINT] stoa(s) [$60]
+BYTE FUNC getchar() [JSR $302A STOREBYTE $60]
+BYTE FUNC getdos=*(STRING s) asetup1() [JSR $30BD JMP stback]
+BYTE FUNC getkey() [JSR $3033  STOREBYTE $60]
+CARD FUNC getw=$3157(BYTE IOCB)
+CARD FUNC gtime() [JSR $3054 STOREINT $60]
+BYTE FUNC hitpf=$1C65(INT who,hitwho)
+BYTE FUNC hitpl=$1C6E(INT who,hitwho)
+BYTE FUNC inkey=$1CC5()
+BYTE FUNC isalnum=$1C5C(BYTE c)
+BYTE FUNC isalpha=$1C23(BYTE c)
+BYTE FUNC isnumeric=$1C29(BYTE c)
+BYTE FUNC isspace=*(BYTE c) [$C9$20$D0$03$85$A0$60$A9$00$F0$F9]
+BYTE FUNC locate=*(CARD x, BYTE y) asetup1() [JSR $3099 STOREBY
+TE $60]
+INT  FUNC putw=$1C50(CARD word,BYTE iocb)
+BYTE FUNC rand=$1B89(BYTE max)
+INT  FUNC scanf=*(STRING s,CARD t1,t2,t3,t4,t5,t6) [$84$A2] sta
+setup() [JSR $3126] stback() [$60]
+INT  FUNC toaschi(STRING s, INT i) [$84$A2] stasetup() [JSR $31
+39 JMP stback]
+BYTE FUNC tolower=$1C3E(BYTE c)
+BYTE FUNC toupper=$1C38(BYTE c)
+
+MODULE ;for user

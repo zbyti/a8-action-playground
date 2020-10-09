@@ -1,0 +1,36 @@
+MODULE ; RUNTIME.ACT
+
+SET $4E8=$1B5D ;MULTIPLY
+SET $4EA=$1B71 ;DIVIDE
+SET $4EC=$1B81 ;REMAINDER
+
+INT FUNC dvcopen=*(CARD T1,T2,T3,T4) asetup1() [JMP $301B]
+PROC dvcmove=*(CARD source,dest,len) asetup1() [JMP $3015]
+
+INT  FUNC OPEN(BYTE d,CHAR ARRAY f,BYTE m,a2) stoc(f) dvcopen(d
+,m,a2,f) [STOREINT] stoa(f) [$60]
+BYTE FUNC PEEK=*(CARD addr) asetup1() [JSR $3048 STOREBYTE $60]
+CARD FUNC PEEKC=*(CARD addr) asetup1() [JSR $304E STOREINT $60]
+BYTE FUNC POKE=*(CARD addr, BYTE val) asetup1() [JMP $304B]
+INT  FUNC SCOMPARE(CHAR ARRAY s1,s2) stoc(s1) stoc(s2) asetup2(
+) [JSR $3006$ STOREINT] stoa(s1) stoa(s2) [$60]
+BYTE FUNC STICK=*(BYTE n) asetup1() [JSR $309C STOREBYTE $60]
+BYTE FUNC STRIG=*(BYTE n) asetup1() [JSR $309F STOREBYTE $60]
+
+PROC CLOSE=*(BYTE d) asetup1() [JMP 3021]
+PROC GRAPHICS=*(BYTE mode) asetup1() [JMP $308A]
+PROC MOVEBLOCK(CARD dest,source,len) dvcmove(source,dest,len) R
+ETURN
+PROC POSITION=*(CARD col, BYTE row) asetup1() [JMP $3090]
+PROC POKEC=$315A(CARD addr, CARD val)
+PROC SCOPY(STRING dest,source) stoc(dest) stoc(source) asetup2(
+) [JSR $3009] stoa(source) stoa(dest) RETURN
+PROC SETBLOCK=*(CARD addr,size, BYTE value) asetup1() [JMP $314
+5]
+PROC SETCOLOR=*(CARD register,hue, BYTE luminance) asetup1() [J
+MP $3120]
+PROC SOUND=*(CARD voice,pitch,distortion, BYTE volume) asetup1(
+) [JMP $30B7]
+PROC ZERO=*(CARD addr,size) asetup1() [JMP $3075]
+
+MODULE

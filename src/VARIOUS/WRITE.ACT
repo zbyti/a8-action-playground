@@ -1,0 +1,75 @@
+MODULE
+
+
+;********************************
+;**                            **
+;** Phoenix SoftCrew ACTION!   **
+;** Programms and Tips f. 8Bit **
+;**                            **
+;** Carsten Strotmann          **
+;**                            **
+;********************************
+
+; Programname:Write
+; done by:Carsten Strotmann
+; Filename:WRITE.ACT
+; first Version:21.02.90
+; last change:20.11.91
+; Fast Screen IO
+;
+;
+
+MODULE
+
+BYTE ARRAY vals(7)
+
+BYTE FUNC ASCtoINT =* (BYTE ascii)
+
+[ $85$A0$29$80$85$A1$A5$A0$29$7F$C9$5F
+  $10$0C$C9$1F$B0$05$18$69$40$90$03$38
+  $E9$20$05$A1$85$A0$60 ]
+
+PROC Write=* (BYTE x,y,BYTE ARRAY string)
+
+[ $85$55$86$54$86$D6$84$D4$A5$A3$85$D5
+  $A9$00$85$D7$A5$D6$0A$26$D7$0A$26$D7
+  $0A$26$D7$85$D8$A5$D7$85$D9$A5$D8$0A
+  $26$D7$0A$26$D7$18$65$D8$85$D6$A5$D7
+  $65$D9$85$D7$A5$58$18$65$D6$85$D6$A5
+  $59$65$D7$85$D7$A5$D6$18$65$55$85$D6
+  $90$02$E6$D7$A0$00$B1$D4$A8$B1$D4
+  $20 ASCtoINT $88$91$D6$D0$F6 ]
+
+RETURN
+
+PROC CWrite (BYTE y,BYTE ARRAY string)
+
+  BYTE cen
+
+  cen=40-string(0)
+  cen==RSH 1
+
+  Write (cen,y,string)
+
+RETURN
+
+PROC WriteC (BYTE x,y,CARD val)
+
+ StrC (val,vals)
+ Write (x,y,vals)
+
+RETURN
+
+PROC WriteI (BYTE x,y,INT val)
+
+ StrI (val,vals)
+ Write (x,y,vals)
+
+RETURN
+
+PROC WriteB (BYTE x,y,BYTE val)
+
+ StrB (val,vals)
+ Write (x,y,vals)
+
+RETURN

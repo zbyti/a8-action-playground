@@ -1,0 +1,74 @@
+;**************************************
+;* EPRINT04.ACT                       *
+;*                                    *
+;* Simple PRINT runtime, V0.4         *
+;*                                    *
+;* The runtime file will be named     *
+;* EPRINT.LIB so that the INCLUDE may *
+;* always refer to the same filename  *
+;*                                    *
+;* (c) 2013 Erhard Puetz              *
+;* www.atari-central.de               *
+;*                                    *
+;**************************************
+
+
+MODULE
+
+BYTE ARRAY EOL=[1 155]
+
+PROC PRINT=*(BYTE ARRAY S)
+  [$18      ;CLC
+   $85$A0   ;STA $A0   ;Do not print
+   $69$01   ;ADC #$01  ;lenght byte
+   $8D$344  ;STA $344
+   $86$A1   ;STX $A1
+   $8A      ;TXA
+   $69$00   ;ADC #$00
+   $8D$345  ;STA $345
+   $A0$00   ;LDY #0    ;Get&set length
+   $B1$A0   ;LDA ($A0),Y
+   $8D$348  ;STA $348
+   $8C$349  ;STY $349
+   $A9$0B   ;LDA #$0B  ;BPUT via CIO
+   $8D$342  ;STA $342
+   $A2$00   ;LDX #$00  ;CH #0
+   $20$E456];JSR CIOV
+RETURN
+
+PROC PRINTE=*(BYTE ARRAY S)
+  [$20 PRINT] ;A,X enthalten die schon
+              ;die Adresse des Arrays
+  PRINT(EOL)
+RETURN
+
+PROC PRINTB=*(BYTE N)
+  [$A2$00]  ;LDX #$00
+PROC PRINTC=*(CARD N)
+  [$85$D4   ;STA $D4 Lo-Byte f. IFP
+   $86$D5   ;STX $D5 Hi-Byte
+   $20$D9AA ;JSR IFP
+   $20$D8E6 ;JSR FASC
+   $A0$FF   ;LDY #$FF
+   $C8      ;INY
+   $B1$F3   ;LDA ($F3),Y
+   $99$0551 ;STA $0551,Y
+   $10$F8   ;BPL -8
+   $29$7F   ;AND #$7F
+   $99$0551 ;STA $0551,Y
+   $C8      ;INY
+   $8C$0550 ;STY $550
+   $A9$50   ;LDA #$50
+   $A2$05   ;LDX #$05
+   $20PRINT];JSR PRINT
+RETURN
+
+
+PROC PRINTBE=*(BYTE N)
+  [$A2$00]    ;LDX #$00
+PROC PRINTCE=*(CARD N)
+  [$20PRINTC] ;JSR PRINTC
+  PRINT(EOL)
+RETURN
+
+;END

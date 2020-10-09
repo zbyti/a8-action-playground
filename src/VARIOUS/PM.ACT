@@ -1,0 +1,96 @@
+;********************************
+;** Player-Missile Modul       **
+;** PHOENIX SOFTCREW 1990      **
+;**                            **
+;**              "PMGR.INC"    **
+;********************************
+
+
+PROC PM_Init ()
+
+  BYTE ramtop=$6A,sdmctl=$22F,
+       gractl=$D01D,pmbase=$D407
+  CARD pmadr=$2D5
+
+   ramtop==-16
+   sdmctl==%$1C
+   pmadr=ramtop*$100+$400
+
+   pmbase=ramtop
+   gractl=3
+
+   Zero (ramtop*$100,$800)
+
+RETURN
+
+PROC PM_Set ()
+
+  BYTE sdmctl=$22F
+
+  sdmctl==%$1C
+
+RETURN
+
+PROC P_Pos (BYTE num,xpos,ypos,CARD shape,BYTE len)
+
+  BYTE ARRAY hpos=$D000
+  CARD pmadr=$2D5,adr
+
+  adr=pmadr
+
+  adr==+num*$100+ypos
+
+  MoveBlock (adr,shape,len)
+
+  hpos(num)=xpos
+
+RETURN
+
+PROC P_Size (BYTE num,size)
+
+  BYTE ARRAY ps=$D008
+
+  ps(num)=size
+
+RETURN
+
+PROC PM_Col (BYTE num,hue,lum)
+
+  BYTE ARRAY pcol=$2C0
+
+  pcol (num)=hue*$10+lum
+
+RETURN
+
+PROC M_Pos (BYTE num,xpos,ypos,CARD shape,len)
+
+  BYTE ARRAY hpos=$D004
+  CARD pmadr=$2D5,adr
+
+  adr=pmadr-$100
+  adr==+ypos
+
+  MoveBlock (adr,shape,len)
+
+  hpos=xpos
+
+RETURN
+
+PROC P_Clear (BYTE num)
+
+  CARD pmadr=$2D5
+  Zero (pmadr+num*$100,$100)
+
+RETURN
+
+PROC PM_Restore ()
+
+  BYTE u
+  BYTE ARRAY hpos=$D000
+
+  FOR u=0 TO 8
+  DO
+    hpos(u)=0
+  OD
+
+RETURN

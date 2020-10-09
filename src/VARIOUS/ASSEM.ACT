@@ -1,0 +1,60 @@
+; ASSEM.ACT - ACTION! pseudo-assembler
+;    NOT copyrighted at any time
+;
+;         Programmed by
+;         Allen D. Doum
+;        Downloaded from
+;       THE SOFTWARE CELLAR
+;          (714) 772-9671
+;
+; compiler must be CASE SENSITVE to use
+
+;assembler commands
+
+DEFINE CODE="[",ENDC="]"
+
+;single byte instructions
+
+DEFINE Brk="$00",
+       Clc="$18",Cld="$D8",Cli="$58",
+       Clv="$B8",Dex="$CA",Dey="$88",
+       Inx="$E8",Iny="$C8",Nop="$EA",
+       Pha="$48",Php="$08",Pla="$68",
+       Plp="$28",Rti="$40",Rts="$60",
+       Sec="$38",Sed="$E8",Sei="$78",
+       Tax="$AA",Tay="$A8",Tsx="$BA",
+       Txa="$8A",Txs="$9A",Tya="$98"
+
+;single mode only instructions
+
+DEFINE Bcc="$90",Bcs="$B0",Beq="$F0",
+       Bmi="$30",Bne="$D0",Bpl="$10",
+       Bvc="$50",Bvs="$70",Jsr="$20"
+
+;other instructions require addressing modes (below)
+
+DEFINE Adc="$61+",And="$21+",Asl="$02+",
+       Bit="$20+",Cmp="$C1+",Cpx="$E0+",
+       Cpy="$C0+",Dec="$C2+",Eor="$41+",
+       Inc="$E2+",Jmp="$40+",Lda="$A1+",
+       Ldx="$A2+",Ldy="$A0+",Lsr="$42+",
+       Ora="$01+",Rol="$22+",Ror="$62+",
+       Sbc="$E1+",Sta="$81+",Stx="$82+",
+       Sty="$80+"
+
+;mode operations - use following above
+
+DEFINE PZ ="$04", ;page zero
+       PZi="$14", ;page zero indexed
+       PZx="$14", ;page zero index X
+       PZy="$14", ;page zero index Y
+       IN ="$2C", ;indirect
+       INx="$00", ;X indirect
+       INy="$10", ;Y indirect
+       AB ="$0C", ;absolute
+       ABx="$1C", ;absolute X
+       ABy="$18", ;absolute Y (expt LDX)
+       ABi="$1C", ;Ldx absolute Y
+       AC ="$08", ;accumutator
+       IM ="$08", ;immediate (expt below)
+       IMi="$00"  ;immediate (Ldy,Ldx,Cpy,Cpx)

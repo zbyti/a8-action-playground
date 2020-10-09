@@ -1,0 +1,202 @@
+
+
+
+
+            
+            
+                           Stereo Sound for Action!
+            
+            
+                                 December 1989
+            
+                                      By
+            
+                                 Marty Albert
+            
+            
+            
+            This  document  and the Action! routines attached are in
+            no  way  copyrighted.  They may be freely distributed to
+            all  that  may  have  a  need for them. Please pass them
+            around,  but  keep  this text file as part of the ARC to
+            help folks along.
+            
+            
+            
+            One  of the most exciting things to happen for the Atari
+            8-bits  in the last month or so of 1989 is the advent of
+            the  Stereo  modification  by Chuck Steinman, nick named
+            the "Gumby" mod.
+            
+            In  a  nut  shell, this modification adds a second POKEY
+            chip  to  your  computer  and  allows  you  to  have two
+            channels  of  4  voices  each. This leads to TRUE stereo
+            sound  output  from  the  computer, something that Atari
+            should have done years ago.
+            
+            
+            These   five   Action!   routines   will  allow  Action!
+            programmers to access the new voices in the same fashion
+            as the original voices.
+            
+            
+            Included here are four new routines:
+            
+                                     SndLo
+                                     SndHi
+                                     SRLo 
+                                     SRHi 
+                                     Gumby
+            
+            
+            
+            
+                             Turning The Sound On
+            
+            
+            The PROC SndLo is *exactly* the same as the current PROC
+
+
+
+
+
+
+
+
+
+
+
+
+
+            Sound. It has simply been renamed to comply with the new
+            PROC for the other channel.
+            
+            The  PROC  SndHi is the one that will let you access the
+            new voices.
+            
+            
+            For both PROCs, the command format is:
+            
+            
+                 Snd??(Byte Voice, Pitch, Distortion, Volume)
+            
+            Where:
+            
+               Voice is a value from 0 to 3 for the voice you wish
+                     to access
+            
+               Pitch is a value from 0 to 255, Low to High tones
+            
+               Distortion is a value from 0 to 14 (even only) with
+                     10 being a "pure" tone
+            
+               Volume is a value from 0 to 16, from Low to High
+                     volume
+            
+            
+            In  other  words,  call these PROCs just like the normal
+            Action!  library  call.  The only difference is that you
+            now have access to TWO channels of 4 voices each.
+            
+            
+            As  stated  above,  the  PROC  SndLo  is the same as the
+            Action!  library PROC Sound. You need not use PROC SndLo
+            unless  you  want  to,  but  I  find  that it makes life
+            simpler to have the two commands with similar names.
+            
+            
+            
+            
+                             Turning The Sound Off
+            
+            
+            The  PROC  SRLo  is  *exactly*  the  same os the Action!
+            library routine PROC SndRst. It has been renamed only to
+            provide continuity.
+            
+            To  turn  off  the sound on one of the channels, use the
+            command:
+            
+                                    SR??()
+            
+            This  will  reset  ALL voices for the channel to make no
+            sound.
+
+
+
+
+
+
+
+
+
+
+
+
+
+            
+            
+            Again,  you  need  not use the PROC SRLo since it is the
+            same  as  the library PROC SndRst, but I find it simpler
+            to do so.
+            
+            
+            
+            
+                            Seeing If Gumby Is Home
+            
+            
+            The  FUNC  Gumby  will  allow you to test for the second
+            POKEY  chip  in  order  to let your program determine is
+            Gumby has been installed. The call to this FUNC is:
+            
+                                 Byte Test   
+            
+                                 Test=Gumby()
+            
+            
+            One  of two values will be returned in the variable Test
+            as follows:
+            
+                            0 = Gumby Installed    
+                            1 = Gumby NOT Installed
+            
+            
+            Note  that  when  you make the FUNC call to this routine
+            that  ALL  interrupts  are  disabled  while the check is
+            made.  Upon  return, the interrupt status is restored to
+            its  prior  setting.  This  s  done  to prevent possible
+            spurious responses from the old and/or new POKEY chips.
+            
+            
+                                   WARNING!
+            
+            Use  of  the  PROC  SndHi  or  PROC SRHi on non-upgraded
+            machines may have unpredictable results!! Unless you are
+            100%  *sure*  that  your  program  will  be used only on
+            machines  with  Gumby installed, you should always check
+            first!
+            
+            
+            
+            
+                                    Credits
+            
+            
+            These  PROCs were derived from the Public Domain Action!
+            Run Time system by Jeff Reister. Thanks again!!
+            
+                                                                    
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,25 @@
+; A simple floating point calculator
+
+INCLUDE "D1:STDI .ACT"
+INCLUDE "D1:FLOAT.ACT"
+
+PROC main()
+  FLOAT a(6),b(6),sum(6)
+  BYTE C
+  cprintf("A simple floating point calculator%n");
+  cprintf("}Enter a number, a space or RETURN,%n,an operator, a
+ space or RETURN%n");
+  cprintf("and a second number.%nExample: 2 + 2 RETURN%n");
+  cprintf("Allowable operators are: +,-,/,*%n%n");
+  cprintf("Press BREAK key to quit.%n%n");
+  while scanf("%f %c %f",a,@c,b) >= 0 DO 
+    cprintf("%f %c %f ",a,c,b)
+    if c= '+ then fadd(a,b,sum) cprintf("= %f%n",sum);
+    elseif c= '- then fsub(a,b,sum) cprintf("= %f%n",sum);
+    elseif c= '* then fmul(a,b,sum) cprintf("= %f%n",sum);
+    elseif c= '/ then fdiv(a,b,sum) cprintf("= %f%n",sum);
+    else cprintf("%c is an unkown operator.%n",c) 
+    fi
+  OD 
+RETURN
+

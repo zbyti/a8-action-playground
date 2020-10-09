@@ -1,0 +1,113 @@
+
+Instructions for:
+
+  RELGEN.ACT:== Relocation Generator
+& REOCAT.ACT:== Run-time Relocator
+
+  These programs were intended to
+create a self-relocating object
+file from either an ACTION!
+compiled program or an Assembled
+program. The original object file
+must be a single-stage boot with
+only one origin except for the
+trailing run or init address. The
+following instructions detail the
+steps to make the target object
+file. This file may be appended to
+other binary load files and may
+have other binary files appended to
+it. The program will load at the
+next possible page boundary
+(increment of 256) after MEMLO.
+Because RELGEN compares two
+versions of you object file, you
+may want to init all variables to
+zero to keep the relocation table
+at a minimum. Stray data in the
+uninitialized variables may be
+interpreted as machine code that
+needs relocating.
+
+1) Compile (or Assemble) your code
+  at a convenient area but not
+  conflicting with DOS. In ACTION!,
+  use the following commands to
+  force the program's origin to a
+  specified value ($3000 for example):
+    SET 14=$3000
+    SET $491=$3000
+
+2) Re-Compile your code at $100
+  higher than the first. For the
+  above example, this would be at
+  $3100.
+
+3) From the ACTION! monitor, RUN the
+program RELGEN.ACT. It will prompt
+you for the filenames for the two
+object code files that you compiled
+above. Remember to give the Dn:
+prefix to the filenames. The program
+will compare the two object files
+and note their differences as offsets
+into the file. This information is
+saved in ACTION! form in a file with
+the original name and a ".GEN"
+extention. This will be used in the
+next step. Also, the program creates
+an object file image of the original
+but with an origin of zero. This is
+done to make the relocation process
+easier and this file, with a ".REL"
+extention will be used in step 5.
+
+  Note: RELGEN.ACT requires four open
+DOS files simultaneously. By default,
+DOS usually has buffers for only 3.
+You must use the command:
+
+  SET $709=4
+
+in the ACTION! monitor and type D for
+DOS. Rewrite DOS to the disk and
+reboot. Now, DOS will allow the four
+files to be opened.
+
+4) Now, Read the program RELOC.ACT
+into the ACTION! Editor. This is a
+"generic" run-time relocator. The
+file generated with the RELGEN.ACT
+program (with the ".GEN" extention)
+must be merged into this program
+with the editor Read function.
+Position the cursor where instructed
+and read in the file. Compile this
+code but be sure that it is SET to
+compile above the expected end of
+YOUR program's target location.
+Save this object code to disk and
+go to DOS.
+
+5) Using the DOS Copy command,
+append the ".REL" file generated in
+RELGEN.ACT, to the merged relocator
+file saved in step 4. For example:
+
+C
+Copy from,to:
+TEST.REL,AUTORUN.SYS/A
+
+This assumes that you saved the file
+in Step 4 as AUTORUN.SYS.
+
+6) Finally, the appended file can be
+loaded from DOS or named AUTORUN.SYS
+as above for permanent applications.
+
+If you have question, send E-Mail to:
+  John DeMar 71066,337 on Compuserve
+or leave a message on the ACE-BASE
+BBS at (315)451-7747. Good Luck!
+
+

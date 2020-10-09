@@ -1,0 +1,24 @@
+MODULE ; FLOAT.ACT
+
+DEFINE FLOAT="CHAR ARRAY" ;fp(6)
+
+PROC atn=$1C8F(FLOAT fp1,fp2)
+PROC atof=$1C95(FLOAT fp1,str)
+PROC clog=$1C89(FLOAT fp1,fp2)
+PROC cos=$1C83(FLOAT fp1,fp2)
+PROC deg=$306F()
+PROC exp=$1CA7(FLOAT fp1,fp2,fp3)
+PROC fadd=$1CAD(FLOAT fp1,fp2,fp3)
+PROC fdiv=$1CB3(FLOAT fp1,fp2,fp3)
+PROC fmul=$1CB9(FLOAT fp1,fp2,fp3)
+PROC fsub=$1CBF(FLOAT fp1,fp2,fp3)
+PROC itof=$1C44(CARD i, FLOAT fp)
+PROC log=$1C4A(FLOAT fp1,fp2)
+PROC rad=$3072()
+PROC sin=$1C56(FLOAT fp1,fp2)
+PROC sqr=$1CD7(FLOAT fp1,fp2)
+
+INT FUNC ftoi=$314B(FLOAT fp)
+
+MODULE
+

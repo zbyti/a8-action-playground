@@ -1,0 +1,38 @@
+;A Poke Cheer
+;Antic Vol.4, No.8 / December 1985
+;BASIC version by Lloyd Burchili
+;
+;ACTION! version by JoyfulCoder
+;October 13, 2006
+
+define delay="300"
+
+byte audf1=53760,
+     audc1=53761,
+     audf2=53762,
+     audc2=53763,
+     audf3=53764,
+     audctl=53768,
+     skctl=53775,
+     consol=53279
+   
+card x,d
+
+;Press Option to end
+while consol&4             
+do
+  audf1=230
+  audc1=175
+  audf2=231
+  audc2=175
+  audf3=229
+  skctl=3
+  for d=0 to delay do od
+
+  for x=0 to 25549 STEP 13
+  do
+    audctl=x/100
+    for d=0 to delay do od
+  od
+od
+SndRst()

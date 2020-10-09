@@ -1,0 +1,267 @@
+;********************************
+;**                            **
+;** Phoenix SoftCrew ACTION!   **
+;** Programme und Tips f. 8Bit **
+;**                            **
+;********************************
+
+; Programmname:Stringroutinen
+; Programmierer:Carsten Strotmann
+; Filename:STRING.ACT
+; erste Version:
+; letzte Aenderung:
+; Zweck:
+; Bemerkung:
+; benoetigt DIVERS.ACT
+;
+
+; INCLUDE "DIVERS.ACT"
+
+BYTE FUNC Find (BYTE ARRAY str2,str1)
+
+  BYTE len1,len2,z1,z2,flg,pos
+
+  IF str1(0)>=str2(0) THEN
+   len2=str2(0)
+   len1=str1(0)
+   len1==-len2+1
+   z1=0
+   z2=0
+   DO
+    flg=$FF
+    z1==+1
+    FOR z2=1 to len2
+    DO
+     IF str1(z1+z2-1)#str2(z2) THEN
+      flg=0
+     FI
+    OD
+   UNTIL z1=len1 OR flg#0
+   OD
+   IF flg#0 THEN
+    pos=z1
+   ELSE
+    pos=0
+   FI
+  ELSE
+   pos=0
+  FI
+
+RETURN (pos)
+
+;----------------------------------
+
+PROC Hex (CARD value,BYTE ARRAY hex)
+
+  BYTE u,v1,v2
+
+  BYTE ARRAY hexx ($10)=~['0 '1 '2 '3 '4 '5 '6 '7 '8 '9 'A 'B 'C 'D 'E 'F]
+
+  v1=value RSH 8
+  v2=value
+
+  u=v1 RSH 4
+  hex(1)=hexx(u)
+  u=v1 MOD $10
+  hex(2)=hexx(u)
+  u=v2 RSH 4
+  hex(3)=hexx(u)
+  u=v2 MOD $10
+  hex(4)=hexx(u)
+
+  hex(0)=4
+
+  IF v1=0 THEN
+   hex(1)=hex(3)
+   hex(2)=hex(4)
+   hex(0)=2
+  FI
+
+RETURN
+
+;-----------------------------------
+
+CARD FUNC Dec (BYTE ARRAY hexc)
+
+  BYTE v1,v2,pos
+  BYTE ARRAY such(2),hexd($11)
+  CARD result
+
+  pos=1
+  v1=0
+  v2=0
+  Scopy (hexd,"0123456789ABCDEF")
+
+  IF hexc(0)=4 THEN
+   such(0)=1
+   such(1)=hexc(pos)
+   v1=Find (such,hexd)-1
+   v1==*$10
+   pos==+1
+   such(1)=hexc(pos)
+   v1==+Find (such,hexd)-1
+   pos==+1
+  FI
+
+  IF hexc(0)=4 OR hexc(0)=2 THEN
+   such(0)=1
+   such(1)=hexc(pos)
+   v2=Find (such,hexd)-1
+   v2==*$10
+   pos==+1
+   such(1)=hexc(pos)
+   v2==+Find (such,hexd)-1
+  FI
+
+  result=v1
+  RESULT==*$100
+  result==+v2
+
+RETURN (result)
+
+;----------------------------------
+
+PROC Upper (BYTE ARRAY text)
+
+  BYTE u
+
+  FOR u=1 TO text(0)
+  DO
+   IF text(u)>$60 AND text(u)<$7B THEN
+    text(u)==-$20
+   FI
+  OD
+
+RETURN
+
+;-----------------------------------
+
+PROC Lower (BYTE ARRAY text)
+
+  BYTE u
+
+  FOR u=1 TO text(0)
+  DO
+   IF text(u)>$40 AND text(u)<$5B THEN
+    text(u)==+$20
+   FI
+  OD
+
+RETURN
+
+PROC Getin (BYTE ARRAY text,BYTE len)
+
+  BYTE ascii,pos,u,inv
+
+  pos=text(0)+1
+  inv=0
+
+  IF text(0)#0 THEN
+   Print (text)
+  FI
+
+  DO
+   ascii=Inkey ()
+
+   IF ascii=129 THEN
+    inv==!$80
+   FI
+   IF ascii=$1E AND pos>1 THEN
+    pos==-1
+    PutD (0,$1E)
+   FI
+   IF ascii=$7E AND pos>1 THEN
+    pos==-1
+    PutD (0,$7E)
+   FI
+   IF ascii=$1F AND pos#len+1 THEN
+    pos==+1
+    PutD (0,$1F)
+   FI
+   IF ascii>26 AND ascii<32 THEN
+    ascii=128
+   FI
+   IF pos#len+1 AND ascii<$7E THEN
+    ascii==+inv
+    PutD (0,ascii)
+    text(pos)=ascii
+    pos==+1
+   FI
+   text(0)=pos-1
+   Klick (2)
+  UNTIL ascii=$9B
+  OD
+
+RETURN
+
+PROC ClearChar (BYTE ARRAY text)
+
+  text(0)=0
+
+RETURN
+
+PROC FillString (BYTE ARRAY string,BYTE ch,BYTE len)
+
+ BYTE u
+
+ FOR u=1 TO len
+ DO
+  string(u)=ch
+ OD
+
+ string(0)=len
+
+RETURN
+
+PROC Sort (BYTE ARRAY field)
+
+  BYTE len,flg,u
+
+  len=field(0)
+  DO
+   flg=0
+   FOR u=1 TO len-1
+   DO
+    IF field(u)>field(u+1) THEN
+     flg=field(u+1)
+     field(u+1)=field(u)
+     field(u)=flg
+     flg=1
+    FI
+   OD
+  UNTIL flg=0
+  OD
+
+RETURN
+
+PROC Inters (BYTE ARRAY string)
+
+ BYTE u
+
+ FOR u=1 TO string(0)
+ DO
+  string(u)=Inter(string(u))
+ OD
+
+RETURN
+
+PROC RSet (BYTE ARRAY dest,source)
+
+ BYTE l1,l2,u
+
+ l1=dest(0)
+ l2=source(0)
+
+ IF l1>=l2 THEN
+  FOR u=1 TO l1-l2
+  DO
+   dest(u)=32
+  OD
+  FOR u=1 TO l2
+  DO
+   dest (l1-l2+u)=source(u)
+  OD
+
+ FI
+
+RETURN

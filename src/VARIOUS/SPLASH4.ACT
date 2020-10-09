@@ -1,0 +1,155 @@
+;  SPLASH4
+;------------------------------------
+;  Gr7plus 
+; Paul Chabot  
+;
+MODULE
+BYTE ARRAY mask=[64 16 4 1]
+CARD ARRAY adrow(160)
+
+PROC Clor(BYTE c)
+mask(3)=c:mask(2)=c LSH 2
+mask(1)=c LSH 4:mask(0)=c LSH 6
+RETURN
+
+PROC Dot(BYTE x,y)
+BYTE xb,xr
+BYTE ARRAY row
+  ,premask=[63 207 243 252]
+xb=x RSH 2:xr=x AND 3:row=adrow(y)
+row(xb)==& premask(xr) % mask(xr)
+RETURN
+
+PROC BLine(BYTE x1,y1,x2,y2)
+BYTE x,y,xf,yf,i
+INT a,b,t,dx,dy
+Dot(x1,y1):Dot(x2,y2)    
+IF x2>x1 THEN dx=x2-x1:xf=0
+ELSE dx=x1-x2:xf=1 FI
+IF y2>y1 THEN dy=y2-y1:yf=0
+ELSE dy=y1-y2:yf=1 FI
+IF dx<2 AND dy<2 THEN RETURN FI
+x=x1:y=y1
+IF dx>dy THEN a=dy+dy:t=a-dx:b=t-dx
+  FOR i=2 TO dx DO 
+    IF xf=0 THEN x==+1 ELSE x==-1 FI
+    IF t<0 THEN t==+a
+    ELSE t==+b
+      IF yf=0 THEN y==+1 ELSE y==-1 FI
+    FI Dot(x,y)
+  OD
+ELSE a=dx+dx:t=a-dy:b=t-dy
+  FOR i=2 TO dy DO
+    IF yf=0 THEN y==+1 ELSE y==-1 FI
+    IF t<0 THEN t==+a
+    ELSE t==+b
+      IF xf=0 THEN x==+1 ELSE x==-1 FI
+    FI Dot(x,y)
+  OD 
+FI
+RETURN
+
+PROC Gr7plus()
+BYTE i
+BYTE ARRAY dl
+CARD sa=88,dlist=560
+Graphics(8):adrow(0)=sa
+FOR i=1 TO 159 DO
+  adrow(i)=adrow(i-1)+40
+OD
+dl=dlist:dl(3)=78:dl(99)=78
+FOR i=6 TO 98 DO dl(i)=14 OD
+FOR i=102 TO 166 DO dl(i)=14 OD
+RETURN
+;------------------------------------
+; COLOR SPLASH
+;
+MODULE
+BYTE cur=752,key=764,trow=656,tcol=657
+  ,x,y,s,c,i,j
+BYTE ARRAY creg=708
+  ,dfault=[54 26 194 0 80]
+
+PROC Splash()
+FOR i=0 TO 159 STEP s DO
+  BLine(x,y,i,0):BLine(x,y,i,159)
+  BLine(x,y,0,i):BLine(x,y,159,i)
+OD
+RETURN
+
+PROC IncStep()
+s==+1:IF s>16 THEN s=1 FI
+trow=1:tcol=26:PrintB(s):Print(" ")
+RETURN
+
+PROC IncColor()
+i=c:c==+1
+IF c>3 THEN c=0:i=4 FI
+Clor(c):i=creg(i) 
+trow=1:tcol=37:PrintB(c):Print(" ")
+trow=2:tcol=36:PrintB(i RSH 4):Print(" ")
+trow=3:tcol=36:PrintB(i & 14):Print(" ")
+RETURN
+
+PROC IncHue()
+IF c=0 THEN i=4 ELSE i=c-1 FI
+j=creg(i) RSH 4:j==+1
+IF j>15 THEN j=0 FI
+trow=2:tcol=36:PrintB(j):Print(" ")
+creg(i)=(j LSH 4)+(creg(i) & 14)
+RETURN
+
+PROC IncLum()
+IF c=0 THEN i=4 ELSE i=c-1 FI
+j=creg(i) & 14:j==+2
+IF j>15 THEN j=0 FI
+trow=3:tcol=36:PrintB(j):Print(" ")
+creg(i)=(creg(i) & 240)+j
+RETURN
+
+PROC Joystick()
+BYTE st,k
+DO trow=1:tcol=9
+  PrintC(x):Print(" , "):PrintB(y):Print(" ")
+  WHILE Stick(0)=15 DO
+    IF Strig(0)=0 THEN Splash() FI
+    IF key<255 THEN k=key:key=255
+      IF k=62 THEN IncStep()       ;S
+      ELSEIF k=18 THEN IncColor()  ;C
+      ELSEIF k=57 THEN IncHue()    ;H
+      ELSEIF k=0 THEN IncLum()     ;L
+      ELSEIF k=35 THEN RETURN      ;N
+      FI
+    FI
+  OD st=Stick(0)
+  IF st=7 AND x<159 THEN x==+1
+  ELSEIF st=11 AND x>0 THEN x==-1
+  ELSEIF st=13 AND y<159 THEN y==+1
+  ELSEIF st=14 AND y>0 THEN y==-1
+  FI
+OD
+RETURN
+
+PROC Setup()
+Gr7plus():cur=1
+FOR i=0 TO 4 DO creg(i)=dfault(i) OD
+PrintE("  Çò·ðìõó       Ó Ð Ì Á Ó È         ")
+PrintE("CENTER 80 , 60   [S]tep 7  [C]OLOR")
+PrintE("    [joystick]              [H]ue")
+Print("[trig]-SPLASH  [N]ew Screen [L]um")
+x=80:y=60:s=7:c=0:IncColor()
+RETURN
+
+PROC OpenScene()
+Setup():x=20:y=20:s=9:Splash()
+IncColor():x=50:y=110:s=7:Splash()
+IncColor():x=120:y=60:s=9:Splash()
+IncColor():x=80:y=130:s=9:Splash()
+IncColor():x=140:y=130:s=7:Splash()
+RETURN
+
+PROC Main()
+OpenScene():Joystick()
+DO Setup():Joystick() OD
+RETURN
+
