@@ -1,5 +1,7 @@
 # Action! 3.6 by OSS
 
+![](action.png)
+
 [Wikipedia](https://en.wikipedia.org/wiki/Action!_(programming_language))
 
 [AtariWiki](https://atariwiki.org/wiki/Wiki.jsp?page=Action)
