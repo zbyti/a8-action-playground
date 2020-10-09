@@ -1,0 +1,32 @@
+|#|Error codes
+|0|Out of system memory.
+|1|Missing " (double quote) " in a string.
+|2|Nested Defines. You cannot nest the Define directive.
+|3|Global variable symbol table full.
+|4|Local variable symbol table full.
+|5|Set directive syntax error.
+|6|Wrong declaration format.
+|7|Invalid argument list.
+|8|Variable not declared.
+|9|A variable was used where a constant of some kind was required.
+|10|Illegal assignment.
+|11|Unknown error. System error routines have been impaired so an error can't be defined.
+|12|Missing THEN
+|13|Missing FI.
+|14|Out of code space.
+|15|Missing DO.
+|16|Missing TO.
+|17|Bad expression. Illegal expression format.
+|18|Unmatched parenthesis.
+|19|Missing OD.
+|20|Can't allocate memory.
+|21|Illegal array reference.
+|22|Input file too large. Break it up.
+|23|Illegal conditional statement.
+|24|Illegal FOR statement syntax.
+|25|Illegal EXIT. No DO ‐ OD loop for the EXIT to EXIT out of.
+|26|Nesting too deep (16 levels maximum).
+|27|Illegal TYPE syntax.
+|28|Illegal RETURN.
+|61|Out of Symbol Table space.
+|128|BREAK key was used to stop program execution. *Go
