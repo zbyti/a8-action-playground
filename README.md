@@ -9,5 +9,3 @@
 [Getting in on the Action 1](https://atariwiki.org/wiki/Wiki.jsp?page=Getting%20in%20on%20the%20Action%201)
 
 [Getting in on the Action 2](https://atariwiki.org/wiki/Wiki.jsp?page=Getting%20in%20on%20the%20Action%202)
-
-![](action.png)
