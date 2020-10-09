@@ -36,11 +36,10 @@ MODULE
 BYTE
   COLPF2=$D018,PORTB=$D301,
   WSYNC=$D40A,NMIEN=$D40E,
-  RTCLOK2=$14
+  CARTOFF=$D508,RTCLOK2=$14
 
 CARD
-  DLIST=$D402,NMIVEC=$FFFA,
-  LMS=$E000,CARTOFF=$D508,
+  DLIST=$D402,NMIVEC=$FFFA,LMS=$E000,
   VDSLST=NMI+6,VBIVEC=NMI+19
 
 PROC SYSTEMOFF=*()
@@ -84,6 +83,7 @@ RTI
 ;------------------------------------------------------------------------------
 
 PROC MAIN=*()
+  ; CARTOFF=1 disable Action! 3.6 cartridge
   SYSTEMOFF()
   WAIT(50) DLIST=DL
   WAIT(100) VBIVEC=VBI
@@ -92,6 +92,5 @@ PROC MAIN=*()
   WAIT(255)
   VBIVEC=OFFJMP
   VDSLST=OFFJMP
-  ; CARTOFF=1 disable Action! 3.6 cartridge
   DO OD
 RTS
