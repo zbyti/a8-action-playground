@@ -2,29 +2,29 @@
 ; System Off in Action!
 ; by @zbyti
 ;------------------------------------------------------------------------------
-;   STABLE     APPMHI      CODEBASE       CODEOFF
-SET $495=8 SET $E=$E00 SET $491=$E00 ;SET $B5=$FC00
-;   offset for F0x Dos RUNADDR=$0A00
+;   STABLE     APPMHI      CODEBASE         CODEOFF
+SET $495=8 SET $E=$1000 SET $491=$1000 ;SET $B5=$FA00
+;   offset for F0x Dos set CODEBASE to $0A00
 ;------------------------------------------------------------------------------
 
 DEFINE
   PHR="[$48$8A$48$98$48]",PLR="[$68$A8$68$AA$68]",
   PHA="[$48]",PLA="[$68]",SEI="[$78]",
-  RTI="[$40]",RTS="[$60]"
+  RTI="[$40]",RTS="[$60]",OFFJMP="NMI+21"
 
 ;------------------------------------------------------------------------------
 
 PROC NMI=*()[
  $2C $0F $D4  ;BIT $D40F   ;NMIST
  $10 $03      ;BPL
- $4C NMI+21   ;JMP
+ $4C OFFJMP   ;JMP VDSLST
  $E6 $14      ;INC $14     ;RTCLOK+2
  $D0 $06      ;BNE
  $E6 $13      ;INC $13     ;RTCLOK+1
  $D0 $02      ;BNE
  $E6 $12      ;INC $12     ;RTCLOK
- $4C NMI+21   ;JMP
- $40          ;RTI
+ $4C OFFJMP   ;JMP VBIVEC
+ $40          ;OFFJMP
 ]
 
 PROC WAIT=*(BYTE F)[$18$65$14$C5$14$D0$FC$60]
@@ -52,6 +52,7 @@ RTS
 ;------------------------------------------------------------------------------
 ; some exaple display list and interrupts
 ;------------------------------------------------------------------------------
+
 PROC DL=*()[
   $70 $70 $70
   $42 LMS
@@ -88,6 +89,9 @@ PROC MAIN=*()
   WAIT(100) VBIVEC=VBI
   WAIT(100) VDSLST=DLI1
   NMIEN=$C0
+  WAIT(255)
+  VBIVEC=OFFJMP
+  VDSLST=OFFJMP
   ; CARTOFF=1 disable Action! 3.6 cartridge
   DO OD
 RTS
