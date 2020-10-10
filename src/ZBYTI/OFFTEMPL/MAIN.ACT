@@ -1,5 +1,6 @@
 ;------------------------------------------------------------------------------
 ; Brief Memory Map:
+; $0200 - $07ff  later usage
 ; $0800 - $0bff  charset 1
 ; $0c00 - $0fff  charset 2
 ; $1000 - $10ff  Display List
