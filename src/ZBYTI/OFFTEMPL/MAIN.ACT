@@ -22,8 +22,8 @@ SET $495=8 SET $491=$1000 SET $E=$1000
 MODULE
 
 INCLUDE "H6:DL.ACT"
-INCLUDE "H6:HELPERS.ACT"
 INCLUDE "H6:SYS.ACT"
+INCLUDE "H6:HELPERS.ACT"
 
 ;------------------------------------------------------------------------------
 ; Main logic
