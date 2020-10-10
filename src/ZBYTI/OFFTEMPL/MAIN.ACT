@@ -2,7 +2,7 @@
 ; Brief Memory Map:
 ; $0800 - $0bff  charset 1
 ; $0c00 - $0fff  charset 2
-; $1000 - $10ff  Display ListT
+; $1000 - $10ff  Display List
 ; $1100 - $11ff  Tools - short PROC/FUNC
 ; $1200 - $92ff  main code (33535 bytes ~ 33 KB)
 ; $9300 - $cfff  later usage
