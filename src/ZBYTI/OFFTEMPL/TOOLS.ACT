@@ -1,0 +1,21 @@
+;------------------------------------------------------------------------------
+; Short PROC/FUNC
+;------------------------------------------------------------------------------
+SET $E=$E08
+
+PROC PAUSE=*()[$A5$14$C5$14$F0$FC$60]
+PROC WAIT=*(BYTE F)[$18$65$14$C5$14$D0$FC$60]
+PROC RSYNC=*(BYTE L)[$CD$0B$D4$D0$FB$60]
+
+PROC NMI=*()[
+ $2C $0F $D4  ;BIT $D40F   ;NMIST
+ $10 $03      ;BPL
+ $4C OFFJMP   ;JMP VDSLST
+ $E6 $14      ;INC $14     ;RTCLOK+2
+ $D0 $06      ;BNE
+ $E6 $13      ;INC $13     ;RTCLOK+1
+ $D0 $02      ;BNE
+ $E6 $12      ;INC $12     ;RTCLOK
+ $4C OFFJMP   ;JMP VBIVEC
+ $40          ;OFFJMP
+]
