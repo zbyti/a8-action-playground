@@ -49,7 +49,7 @@ PROC SYSTEMOFF=*()
 RTS
 
 ;------------------------------------------------------------------------------
-; some exaple display list and interrupts
+; some example of display list and interrupts
 ;------------------------------------------------------------------------------
 
 PROC DL=*()[
