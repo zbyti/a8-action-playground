@@ -15,7 +15,7 @@ DEFINE
 ;------------------------------------------------------------------------------
 
 PROC NMI=*()[
- $2C $0F $D4  ;BIT $D40F   ;NMIST
+ $2C $D40F    ;BIT $D40F   ;NMIST
  $10 $03      ;BPL
  $4C OFFJMP   ;JMP VDSLST
  $E6 $14      ;INC $14     ;RTCLOK+2
@@ -84,7 +84,7 @@ RTI
 
 PROC MAIN=*()
   ; CARTOFF=1 disable Action! 3.6 cartridge
-  SYSTEMOFF()
+  WAIT(1) SYSTEMOFF()
   WAIT(50) DLIST=DL
   WAIT(100) VBIVEC=VBI
   WAIT(100) VDSLST=DLI1
