@@ -1,0 +1,96 @@
+;------------------------------------------------------------------------------
+; Fire by koalka/bbsl/karzelki
+; Action! version by zbyti
+;------------------------------------------------------------------------------
+;   APPMHI      CODEBASE
+SET $E=$2000 SET $491=$2000
+;------------------------------------------------------------------------------
+
+DEFINE
+  CHARSET="$6000",CHARSETH="$60",SCREEN="$6400",RTS="[$60]",
+  LDA="$AD",LDAX="$BD",STAX="$9D",LSR="$4A",CLC="$18",ANDI="$29",
+  ADCX="$7D",LDX="$A6",INC="$E6",DEC="$C6"
+
+BYTE
+  SDMCTL=$22F,GPRIOR=$26F,COLOR4=$2C8,
+  COLBK=$D01A,RANDOM=$D20A
+
+BYTE
+  B0I=$CA,B1I=$CB,TMP=$CC
+
+BYTE POINTER
+  P=0,PCHARSET=CHARSET
+
+
+CARD
+  VDSLST=$200,SDLSTL=$230,CHBAS=$2F4
+
+PROC DL=*()[
+  $42 SCREEN
+  2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2 2
+  $41 DL
+]
+
+PROC PAUSE=*()[$A5$14$C5$14$F0$FC$60]
+
+PROC MAIN=*()
+
+  COLOR4=$20 TMP=0
+  SDLSTL=DL CHBAS=CHARSETH
+  GPRIOR=$40 SDMCTL=$21
+
+
+  B0I=0 DO
+    P(SCREEN+B0I)=0
+    P(SCREEN+$100+B0I)=0
+    P(SCREEN+$200+B0I)=0
+    P(SCREEN+$300+B0I)=0
+    B0I==+1 UNTIL B0I=0
+  OD
+
+
+
+  B0I=0 DO
+    B1I=0 DO
+      PCHARSET(B1I)=TMP
+      B1I==+1 UNTIL B1I=8
+    OD
+    PCHARSET==+8 TMP==+$11
+    B0I==+1 UNTIL B0I=$10
+  OD
+
+  DO
+    B0I=0 DO
+      [
+        LDX B0I
+        LDAX $63FF CLC
+        ADCX SCREEN ADCX $6401 ADCX $6420
+        LSR LSR STAX $63E1
+
+        LDAX $64FF CLC
+        ADCX SCREEN+$100 ADCX $6501 ADCX $6520
+        LSR LSR STAX $64E1
+
+        LDAX $65FF CLC
+        ADCX SCREEN+$200 ADCX $6601 ADCX $6620
+        LSR LSR STAX $65E1
+
+        INC B0I
+      ]
+      UNTIL B0I=0
+    OD
+
+    ;COLBK=10
+    ;PAUSE()
+
+    B0I=$1F DO
+      [
+        LDX B0I
+        LDA RANDOM ANDI $F STAX $66E0
+        DEC B0I
+      ]
+      UNTIL B0I=$FF
+    OD
+  OD
+
+RTS
