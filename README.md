@@ -6,7 +6,7 @@
 
 [Syntax highliting ST3](https://github.com/michalkolodziejski/ST3-action-syntax-highlighting)
 
-[Syntax highliting VC](https://marketplace.visualstudio.com/items?itemName=pgarcia.ossaction)
+[Syntax highliting VSC](https://marketplace.visualstudio.com/items?itemName=pgarcia.ossaction)
 
 [Getting in on the Action 1](https://atariwiki.org/wiki/Wiki.jsp?page=Getting%20in%20on%20the%20Action%201)
 
